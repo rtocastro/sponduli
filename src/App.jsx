@@ -1,30 +1,26 @@
-import { useState } from "react";
+import { Routes, Route } from "react-router-dom";
 import "./App.css";
+
 import Sidebar from "./components/Sidebar";
-import Dashboard from "./components/Dashboard";
+import Dashboard from "./pages/Dashboard";
+import Holdings from "./pages/Holdings";
+import Watchlist from "./pages/Watchlist";
+import Ethics from "./pages/Ethics";
+import Insights from "./pages/Insights";
 
 function App() {
-  const [activeSection, setActiveSection] = useState("Dashboard");
-
   return (
     <div className="app-shell">
-      <Sidebar
-        activeSection={activeSection}
-        setActiveSection={setActiveSection}
-      />
+      <Sidebar />
 
       <main className="main-content">
-        {activeSection === "Dashboard" && <Dashboard />}
-
-        {activeSection !== "Dashboard" && (
-          <section className="placeholder-page">
-            <p className="eyebrow">{activeSection}</p>
-            <h2>{activeSection}</h2>
-            <p>
-              This section is ready. We’ll build this screen next.
-            </p>
-          </section>
-        )}
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/holdings" element={<Holdings />} />
+          <Route path="/watchlist" element={<Watchlist />} />
+          <Route path="/ethics" element={<Ethics />} />
+          <Route path="/insights" element={<Insights />} />
+        </Routes>
       </main>
     </div>
   );

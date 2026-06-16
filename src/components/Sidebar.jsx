@@ -1,6 +1,14 @@
-const navItems = ["Dashboard", "Holdings", "Watchlist", "Ethics", "Insights"];
+import { NavLink } from "react-router-dom";
 
-function Sidebar({ activeSection, setActiveSection }) {
+const navItems = [
+  { label: "Dashboard", path: "/" },
+  { label: "Holdings", path: "/holdings" },
+  { label: "Watchlist", path: "/watchlist" },
+  { label: "Ethics", path: "/ethics" },
+  { label: "Insights", path: "/insights" },
+];
+
+function Sidebar() {
   return (
     <aside className="sidebar">
       <div>
@@ -9,13 +17,13 @@ function Sidebar({ activeSection, setActiveSection }) {
 
         <nav>
           {navItems.map((item) => (
-            <button
-              key={item}
-              className={activeSection === item ? "active" : ""}
-              onClick={() => setActiveSection(item)}
+            <NavLink
+              key={item.path}
+              to={item.path}
+              className={({ isActive }) => (isActive ? "active" : "")}
             >
-              {item}
-            </button>
+              {item.label}
+            </NavLink>
           ))}
         </nav>
       </div>

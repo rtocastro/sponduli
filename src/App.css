@@ -57,7 +57,7 @@ button {
   margin-top: 40px;
 }
 
-.sidebar button {
+.sidebar a {
   border: 0;
   border-radius: 14px;
   padding: 14px 16px;
@@ -65,6 +65,12 @@ button {
   background: transparent;
   text-align: left;
   cursor: pointer;
+  text-decoration: none;
+}
+
+.sidebar a.active,
+.sidebar a:hover {
+  background: rgba(0, 168, 107, 0.16);
 }
 
 .sidebar button.active,
