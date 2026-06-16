@@ -1,42 +1,238 @@
-#root {
-  max-width: 1280px;
+:root {
+  --bg: #07110d;
+  --panel: #0b1a13;
+
+  --jade: #00a86b;
+
+  --gold: #f4c542;
+  --amber: #ffb703;
+
+  --text: #f4fff8;
+  --muted: #9fb8aa;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #07110d;
+  color: #f4fff8;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+button {
+  font: inherit;
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+}
+
+.sidebar {
+  padding: 28px;
+  background: #0b1a13;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sidebar h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.sidebar p {
+  color: #9fb8aa;
+  line-height: 1.5;
+}
+
+.sidebar nav {
+  display: grid;
+  gap: 12px;
+  margin-top: 40px;
+}
+
+.sidebar button {
+  border: 0;
+  border-radius: 14px;
+  padding: 14px 16px;
+  color: #dfffea;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.sidebar button.active,
+.sidebar button:hover {
+  background: rgba(0, 168, 107, 0.16);
+}
+
+.main-content {
+  padding: 36px;
+}
+
+.dashboard {
+  max-width: 1180px;
   margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: center;
+  margin-bottom: 28px;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+.eyebrow {
+  color: #00a86b;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.dashboard-header h2 {
+  margin: 6px 0 0;
+  font-size: clamp(2rem, 4vw, 4rem);
+}
+
+.primary-button {
+  background:
+    linear-gradient(
+      135deg,
+      var(--jade),
+      var(--gold)
+    );
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.card,
+.holding-card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 22px;
+  padding: 22px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.card p,
+.holding-card p {
+  margin: 0;
+  color: #9fb8aa;
+}
+
+.card h3,
+.holding-card h3 {
+  margin: 10px 0;
+}
+
+.hero-card {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(0,168,107,.25),
+      rgba(244,197,66,.15)
+    );
+}
+
+.positive {
+  color: #64f4a7;
+}
+
+.negative {
+  color: #ff8b8b;
+}
+
+.progress-bar {
+  height: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-bar div {
+  height: 100%;
+  background: #00a86b;
+  border-radius: inherit;
+}
+
+.recommendation-card {
+  margin-top: 18px;
+}
+
+.holdings-list {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.holding-card {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  gap: 18px;
+  align-items: center;
+}
+
+.holding-card span {
+  display: block;
+  color: #9fb8aa;
+  margin-top: 4px;
+}
+
+.placeholder-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.placeholder-page h2 {
+  margin: 8px 0;
+  font-size: clamp(2rem, 5vw, 4rem);
+}
+
+@media (max-width: 900px) {
+  .app-shell {
+    grid-template-columns: 1fr;
   }
-  to {
-    transform: rotate(360deg);
+
+  .sidebar {
+    position: static;
+  }
+
+  .card-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .holding-card {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+@media (max-width: 600px) {
+  .main-content {
+    padding: 22px;
   }
-}
 
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
 }
