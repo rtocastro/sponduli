@@ -3,22 +3,6 @@ import { calculatePosition, getRecommendation } from "../utils/rulesEngine";
 import { usePortfolio } from "../context/PortfolioContext";
 
 function Dashboard() {
-  const totals = portfolio.reduce(
-    (acc, position) => {
-      const stats = calculatePosition(position);
-
-      acc.invested += stats.invested;
-      acc.currentValue += stats.currentValue;
-      acc.profit += stats.profit;
-
-      return acc;
-    },
-    {
-      invested: 0,
-      currentValue: 0,
-      profit: 0,
-    }
-  );
 
 const {
   portfolio,
@@ -28,18 +12,6 @@ const {
   topRecommendation,
 } = usePortfolio();
 
-  const totalGainPercent = (totals.profit / totals.invested) * 100;
-  const millionGoalPercent = (totals.currentValue / 1000000) * 100;
-
-  const topRecommendation = portfolio
-    .map((position) => ({
-      ...position,
-      recommendation: getRecommendation(position),
-      stats: calculatePosition(position),
-    }))
-    .sort(
-      (a, b) => b.recommendation.confidence - a.recommendation.confidence
-    )[0];
 
   return (
     <section className="dashboard">
