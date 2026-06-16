@@ -1,5 +1,6 @@
 import portfolio from "../data/mockPortfolio";
 import { calculatePosition, getRecommendation } from "../utils/rulesEngine";
+import { usePortfolio } from "../context/PortfolioContext";
 
 function Dashboard() {
   const totals = portfolio.reduce(
@@ -18,6 +19,14 @@ function Dashboard() {
       profit: 0,
     }
   );
+
+const {
+  portfolio,
+  totals,
+  totalGainPercent,
+  millionGoalPercent,
+  topRecommendation,
+} = usePortfolio();
 
   const totalGainPercent = (totals.profit / totals.invested) * 100;
   const millionGoalPercent = (totals.currentValue / 1000000) * 100;
