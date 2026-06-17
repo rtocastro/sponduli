@@ -345,6 +345,102 @@ button {
   color: #dfffea;
 }
 
+.ethics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.ethics-card {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(0, 168, 107, 0.1),
+      rgba(244, 197, 66, 0.06)
+    );
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  padding: 24px;
+}
+
+.ethics-card h3 {
+  margin: 8px 0 10px;
+  font-size: 1.5rem;
+}
+
+.ethics-card p {
+  color: #9fb8aa;
+  line-height: 1.5;
+}
+
+.checkbox-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+}
+
+.check-row input {
+  width: 18px;
+  height: 18px;
+  accent-color: #f4c542;
+}
+
+.score-control {
+  margin-top: 24px;
+}
+
+.score-control strong {
+  display: block;
+  font-size: 3rem;
+  color: #f4c542;
+  margin-bottom: 18px;
+}
+
+.score-control input {
+  width: 100%;
+  accent-color: #f4c542;
+}
+
+.summary-card {
+  border-color: rgba(244, 197, 66, 0.2);
+}
+
+.filter-pill-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.filter-pill {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(244, 197, 66, 0.14);
+  color: #f4c542;
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+
+.ethics-note {
+  margin-top: 24px;
+}
+
+@media (max-width: 800px) {
+  .ethics-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 700px) {
   .watchlist-topline {
     flex-direction: column;
