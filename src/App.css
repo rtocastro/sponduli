@@ -435,6 +435,81 @@ button {
   margin-top: 24px;
 }
 
+.insight-hero {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(0, 168, 107, 0.18),
+      rgba(244, 197, 66, 0.12)
+    );
+  border: 1px solid rgba(244, 197, 66, 0.22);
+  border-radius: 28px;
+  padding: 28px;
+  margin-bottom: 18px;
+}
+
+.insight-hero h3 {
+  margin: 8px 0;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+}
+
+.insight-hero p {
+  color: #dfffea;
+  line-height: 1.5;
+}
+
+.insight-list {
+  display: grid;
+  gap: 18px;
+}
+
+.insight-card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  padding: 24px;
+}
+
+.insight-card-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+.insight-card h3 {
+  margin: 10px 0;
+}
+
+.insight-card ul {
+  margin: 18px 0 0;
+  padding-left: 20px;
+  color: #dfffea;
+  line-height: 1.7;
+}
+
+.small-score {
+  width: 86px;
+  min-width: 86px;
+  height: 86px;
+}
+
+.small-score strong {
+  font-size: 1.7rem;
+}
+
+.insight-group-title {
+  margin: 30px 0 14px;
+  color: #f4c542;
+  font-size: 1.4rem;
+}
+
+@media (max-width: 700px) {
+  .insight-card-header {
+    flex-direction: column;
+  }
+}
+
 @media (max-width: 800px) {
   .ethics-grid {
     grid-template-columns: 1fr;
