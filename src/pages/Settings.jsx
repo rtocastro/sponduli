@@ -1,17 +1,17 @@
-import { useState } from "react";
+import { useSettings } from "../context/SettingsContext";
 
 function Settings() {
-  const [riskTolerance, setRiskTolerance] = useState("Moderate");
-  const [minimumEthicalScore, setMinimumEthicalScore] = useState(80);
-  const [longTermSplit, setLongTermSplit] = useState(50);
-  const [momentumSplit, setMomentumSplit] = useState(50);
-  const [communityAllocation, setCommunityAllocation] = useState(5);
-
-  function updateLongTermSplit(value) {
-    const newValue = Number(value);
-    setLongTermSplit(newValue);
-    setMomentumSplit(100 - newValue);
-  }
+  const {
+    riskTolerance,
+    setRiskTolerance,
+    minimumEthicalScore,
+    setMinimumEthicalScore,
+    longTermSplit,
+    momentumSplit,
+    updateLongTermSplit,
+    communityAllocation,
+    setCommunityAllocation,
+  } = useSettings();
 
   return (
     <section className="page-section">
