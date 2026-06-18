@@ -6,6 +6,7 @@ const navItems = [
   { label: "Watchlist", path: "/watchlist" },
   { label: "Ethics", path: "/ethics" },
   { label: "Insights", path: "/insights" },
+  { label: "History", path: "/history" },
 ];
 
 function Sidebar() {

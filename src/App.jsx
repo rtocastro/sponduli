@@ -7,6 +7,7 @@ import Holdings from "./pages/Holdings";
 import Watchlist from "./pages/Watchlist";
 import Ethics from "./pages/Ethics";
 import Insights from "./pages/Insights";
+import History from "./pages/History";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/watchlist" element={<Watchlist />} />
           <Route path="/ethics" element={<Ethics />} />
           <Route path="/insights" element={<Insights />} />
+          <Route path="/history" element={<History />} />
         </Routes>
       </main>
     </div>
