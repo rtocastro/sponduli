@@ -8,6 +8,7 @@ import Watchlist from "./pages/Watchlist";
 import Ethics from "./pages/Ethics";
 import Insights from "./pages/Insights";
 import History from "./pages/History";
+import Settings from "./pages/Settings";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/ethics" element={<Ethics />} />
           <Route path="/insights" element={<Insights />} />
           <Route path="/history" element={<History />} />
+          <Route path="/settings" element={<Settings />} />
         </Routes>
       </main>
     </div>

@@ -7,6 +7,7 @@ const navItems = [
   { label: "Ethics", path: "/ethics" },
   { label: "Insights", path: "/insights" },
   { label: "History", path: "/history" },
+  { label: "Settings", path: "/settings" },
 ];
 
 function Sidebar() {
