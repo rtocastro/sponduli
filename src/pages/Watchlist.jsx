@@ -66,6 +66,7 @@ function Watchlist() {
                                     </strong>
                                 </div>
                             </div>
+                            
 
                             <div className="opportunity-callout">
                                 {isBelowEthicalMinimum && (
