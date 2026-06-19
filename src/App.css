@@ -119,8 +119,13 @@ button {
 
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 18px;
+}
+.strategy-card span {
+  display: block;
+  margin-top: 6px;
+  color: #9fb8aa;
 }
 
 .card,
@@ -628,6 +633,20 @@ button {
   grid-template-columns: repeat(4, 1fr);
   gap: 14px;
   margin-top: 20px;
+}
+
+.warning-pill {
+  display: inline-flex;
+  width: fit-content;
+  margin: 0 0 10px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 139, 139, 0.14);
+  color: #ff8b8b !important;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 @media (max-width: 850px) {

@@ -1,16 +1,25 @@
 import portfolio from "../data/mockPortfolio";
 import { calculatePosition, getRecommendation } from "../utils/rulesEngine";
 import { usePortfolio } from "../context/PortfolioContext";
+import { useSettings } from "../context/SettingsContext";
 
 function Dashboard() {
 
-const {
-  portfolio,
-  totals,
-  totalGainPercent,
-  millionGoalPercent,
-  topRecommendation,
-} = usePortfolio();
+  const {
+    portfolio,
+    totals,
+    totalGainPercent,
+    millionGoalPercent,
+    topRecommendation,
+  } = usePortfolio();
+
+  const {
+    riskTolerance,
+    minimumEthicalScore,
+    longTermSplit,
+    momentumSplit,
+    communityAllocation,
+  } = useSettings();
 
 
   return (
@@ -50,6 +59,16 @@ const {
           <div className="progress-bar">
             <div style={{ width: `${millionGoalPercent}%` }} />
           </div>
+        </article>
+
+        <article className="card strategy-card">
+          <p>Current Strategy</p>
+          <h3>{riskTolerance}</h3>
+          <span>Ethical minimum: {minimumEthicalScore}/100</span>
+          <span>
+            Split: {longTermSplit}% long-term / {momentumSplit}% momentum
+          </span>
+          <span>Community: {communityAllocation}%</span>
         </article>
       </div>
 
