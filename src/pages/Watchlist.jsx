@@ -77,12 +77,18 @@ function Watchlist() {
                             </div>
 
                             <div>
-                                <span>Opportunity</span>
+                                <span>Strategy Match</span>
                                 <strong className={opportunityScore >= 75 ? "positive" : "negative"}>
                                     {opportunityScore}/100
                                 </strong>
                             </div>
 
+                            <div>
+                                <span>Trend Confidence</span>
+                                <strong className="coming-soon-score">
+                                    Soon™
+                                </strong>
+                            </div>
 
                             <div className="opportunity-callout">
                                 {isBelowEthicalMinimum && (
