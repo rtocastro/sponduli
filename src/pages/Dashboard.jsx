@@ -3,6 +3,7 @@ import { calculatePosition, getRecommendation } from "../utils/rulesEngine";
 import { usePortfolio } from "../context/PortfolioContext";
 import { useSettings } from "../context/SettingsContext";
 import LiveMarketTest from "../components/LiveMarketTest";
+// import LiveTrendTest from "../components/LiveTrendTest";
 
 function Dashboard() {
 
@@ -74,6 +75,7 @@ function Dashboard() {
       </div>
 
       <LiveMarketTest />
+      {/* <LiveTrendTest /> */}
 
       <article className="card recommendation-card">
         <p>Next Best Action</p>

@@ -1,13 +1,37 @@
-export async function getStockQuote(symbol) {
-  await new Promise((resolve) => setTimeout(resolve, 500));
+ const FINNHUB_BASE_URL = "https://finnhub.io/api/v1";
 
-  return {
-    c: 523.14,
-    d: 7.42,
-    dp: 1.44,
-    h: 528.31,
-    symbol,
-  };
+export async function getStockQuote(symbol) {
+  const apiKey = import.meta.env.VITE_FINNHUB_API_KEY;
+
+  const response = await fetch(
+    `${FINNHUB_BASE_URL}/quote?symbol=${symbol}&token=${apiKey}`
+  );
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch quote for ${symbol}`);
+  }
+
+  return response.json();
+}
+
+export async function getHistoricalCandles(symbol, from, to, resolution = "D") {
+  const apiKey = import.meta.env.VITE_FINNHUB_API_KEY;
+
+  const response = await fetch(
+    `${FINNHUB_BASE_URL}/stock/candle?symbol=${symbol}&resolution=${resolution}&from=${from}&to=${to}&token=${apiKey}`
+  );
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch candles for ${symbol}`);
+  }
+
+  const data = await response.json();
+
+  if (data.s !== "ok") {
+    throw new Error(`No candle data found for ${symbol}`);
+  }
+
+  return data;
 }
 
 export async function getMultipleQuotes(symbols = []) {
