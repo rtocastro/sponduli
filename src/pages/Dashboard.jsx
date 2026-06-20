@@ -2,6 +2,7 @@ import portfolio from "../data/mockPortfolio";
 import { calculatePosition, getRecommendation } from "../utils/rulesEngine";
 import { usePortfolio } from "../context/PortfolioContext";
 import { useSettings } from "../context/SettingsContext";
+import LiveMarketTest from "../components/LiveMarketTest";
 
 function Dashboard() {
 
@@ -71,6 +72,8 @@ function Dashboard() {
           <span>Community: {communityAllocation}%</span>
         </article>
       </div>
+
+      <LiveMarketTest />
 
       <article className="card recommendation-card">
         <p>Next Best Action</p>

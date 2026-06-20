@@ -12,6 +12,28 @@ export function calculateMomentumScore(item) {
   return Math.max(0, Math.min(100, Math.round(rawScore)));
 }
 
+export function calculateOpportunityScore(item, minimumEthicalScore = 80) {
+  const momentumScore = calculateMomentumScore(item);
+
+  const ethicalBonus =
+    item.ethicalScore >= minimumEthicalScore ? 12 : -18;
+
+  const volatilityAdjustment =
+    item.volatility === "low"
+      ? 8
+      : item.volatility === "medium"
+      ? 0
+      : -10;
+
+  const rawScore =
+    momentumScore * 0.6 +
+    item.ethicalScore * 0.4 +
+    ethicalBonus +
+    volatilityAdjustment;
+
+  return Math.max(0, Math.min(100, Math.round(rawScore)));
+}
+
 export function getOpportunityType(item) {
   const score = calculateMomentumScore(item);
 

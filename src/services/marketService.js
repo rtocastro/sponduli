@@ -1,35 +1,20 @@
-const FINNHUB_BASE_URL = "https://finnhub.io/api/v1";
-
 export async function getStockQuote(symbol) {
-  const apiKey = import.meta.env.VITE_FINNHUB_API_KEY;
+  await new Promise((resolve) => setTimeout(resolve, 500));
 
-  if (!apiKey) {
-    console.warn("Missing VITE_FINNHUB_API_KEY");
-    return null;
-  }
-
-  const response = await fetch(
-    `${FINNHUB_BASE_URL}/quote?symbol=${symbol}&token=${apiKey}`
-  );
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch quote for ${symbol}`);
-  }
-
-  return response.json();
+  return {
+    c: 523.14,
+    d: 7.42,
+    dp: 1.44,
+    h: 528.31,
+    symbol,
+  };
 }
 
 export async function getMultipleQuotes(symbols = []) {
-  const results = await Promise.all(
-    symbols.map(async (symbol) => {
-      const quote = await getStockQuote(symbol);
-
-      return {
-        symbol,
-        quote,
-      };
-    })
+  return Promise.all(
+    symbols.map(async (symbol) => ({
+      symbol,
+      quote: await getStockQuote(symbol),
+    }))
   );
-
-  return results;
 }

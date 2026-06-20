@@ -2,6 +2,7 @@ import watchlist from "../data/mockWatchlist";
 import { useSettings } from "../context/SettingsContext";
 import {
     calculateMomentumScore,
+    calculateOpportunityScore,
     getOpportunityType,
 } from "../utils/momentumEngine";
 
@@ -10,8 +11,12 @@ function Watchlist() {
     const { minimumEthicalScore } = useSettings();
 
     const sortedWatchlist = [...watchlist].sort(
-        (a, b) => calculateMomentumScore(b) - calculateMomentumScore(a)
+        (a, b) =>
+            calculateOpportunityScore(b, minimumEthicalScore) -
+            calculateOpportunityScore(a, minimumEthicalScore)
     );
+
+    // const { minimumEthicalScore } = useSettings();
 
     return (
         <section className="page-section">
@@ -27,6 +32,10 @@ function Watchlist() {
                     const momentumScore = calculateMomentumScore(item);
                     const opportunityType = getOpportunityType(item);
                     const isBelowEthicalMinimum = item.ethicalScore < minimumEthicalScore;
+                    const opportunityScore = calculateOpportunityScore(
+                        item,
+                        minimumEthicalScore
+                    );
 
                     return (
                         <article className="watchlist-card" key={item.id}>
@@ -66,7 +75,14 @@ function Watchlist() {
                                     </strong>
                                 </div>
                             </div>
-                            
+
+                            <div>
+                                <span>Opportunity</span>
+                                <strong className={opportunityScore >= 75 ? "positive" : "negative"}>
+                                    {opportunityScore}/100
+                                </strong>
+                            </div>
+
 
                             <div className="opportunity-callout">
                                 {isBelowEthicalMinimum && (
