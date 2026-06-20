@@ -95,6 +95,10 @@ function Watchlist() {
                                     <p className="warning-pill">Below your ethical minimum</p>
                                 )}
                                 <strong>{opportunityType}</strong>
+
+                                <p className="strategy-match-line">
+                                    Strategy Match: {opportunityScore}/100
+                                </p>
                                 <p>{item.reason}</p>
                             </div>
                         </article>

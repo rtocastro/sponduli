@@ -691,6 +691,12 @@ button {
   font-style: italic;
 }
 
+.strategy-match-line {
+  margin-top: 8px;
+  color: #f4c542 !important;
+  font-weight: 700;
+}
+
 @media (max-width: 700px) {
   .market-test-row,
   .quote-result {
