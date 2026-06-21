@@ -1,12 +1,20 @@
 
 import portfolioData from "../data/mockPortfolio";
 import { calculatePosition, getRecommendation } from "../utils/rulesEngine";
-import { createContext, useContext, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 const PortfolioContext = createContext();
 
 export function PortfolioProvider({ children }) {
-const [rawPortfolio, setRawPortfolio] = useState(portfolioData);
+const [rawPortfolio, setRawPortfolio] = useState(() => {
+  const savedPortfolio = localStorage.getItem("sponduli-portfolio");
+
+  if (savedPortfolio) {
+    return JSON.parse(savedPortfolio);
+  }
+
+  return portfolioData;
+});
 
 const portfolio = useMemo(() => {
   return rawPortfolio.map((position) => ({
@@ -14,6 +22,10 @@ const portfolio = useMemo(() => {
     stats: calculatePosition(position),
     recommendation: getRecommendation(position),
   }));
+}, [rawPortfolio]);
+
+useEffect(() => {
+  localStorage.setItem("sponduli-portfolio", JSON.stringify(rawPortfolio));
 }, [rawPortfolio]);
 
 function addInvestment(newInvestment) {

@@ -9,6 +9,7 @@ import Ethics from "./pages/Ethics";
 import Insights from "./pages/Insights";
 import History from "./pages/History";
 import Settings from "./pages/Settings";
+import Timeline from "./pages/Timeline";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/insights" element={<Insights />} />
           <Route path="/history" element={<History />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/timeline" element={<Timeline />}/>
         </Routes>
       </main>
     </div>
