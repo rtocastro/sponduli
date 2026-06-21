@@ -1,17 +1,30 @@
-import { createContext, useContext, useMemo } from "react";
+
 import portfolioData from "../data/mockPortfolio";
 import { calculatePosition, getRecommendation } from "../utils/rulesEngine";
+import { createContext, useContext, useMemo, useState } from "react";
 
 const PortfolioContext = createContext();
 
 export function PortfolioProvider({ children }) {
-  const portfolio = useMemo(() => {
-    return portfolioData.map((position) => ({
-      ...position,
-      stats: calculatePosition(position),
-      recommendation: getRecommendation(position),
-    }));
-  }, []);
+const [rawPortfolio, setRawPortfolio] = useState(portfolioData);
+
+const portfolio = useMemo(() => {
+  return rawPortfolio.map((position) => ({
+    ...position,
+    stats: calculatePosition(position),
+    recommendation: getRecommendation(position),
+  }));
+}, [rawPortfolio]);
+
+function addInvestment(newInvestment) {
+  setRawPortfolio((currentPortfolio) => [
+    ...currentPortfolio,
+    {
+      id: crypto.randomUUID(),
+      ...newInvestment,
+    },
+  ]);
+}
 
   const totals = useMemo(() => {
     return portfolio.reduce(
@@ -44,6 +57,7 @@ export function PortfolioProvider({ children }) {
         totalGainPercent,
         millionGoalPercent,
         topRecommendation,
+        addInvestment,
       }}
     >
       {children}

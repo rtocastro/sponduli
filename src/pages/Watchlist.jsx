@@ -1,5 +1,7 @@
 import watchlist from "../data/mockWatchlist";
 import { useSettings } from "../context/SettingsContext";
+import { useState } from "react";
+import AddFromWatchlistModal from "../components/AddFromWatchlistModal";
 import {
     calculateMomentumScore,
     calculateOpportunityScore,
@@ -9,6 +11,7 @@ import {
 function Watchlist() {
 
     const { minimumEthicalScore } = useSettings();
+    const [selectedItem, setSelectedItem] = useState(null);
 
     const sortedWatchlist = [...watchlist].sort(
         (a, b) =>
@@ -101,10 +104,22 @@ function Watchlist() {
                                 </p>
                                 <p>{item.reason}</p>
                             </div>
+
+                            <button
+                                className="primary-button watchlist-add-button"
+                                onClick={() => setSelectedItem(item)}
+                            >
+                                Add to Portfolio
+                            </button>
                         </article>
                     );
                 })}
             </div>
+            <AddFromWatchlistModal
+                item={selectedItem}
+                isOpen={Boolean(selectedItem)}
+                onClose={() => setSelectedItem(null)}
+            />
         </section>
     );
 }

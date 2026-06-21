@@ -5,7 +5,12 @@ import { useSettings } from "../context/SettingsContext";
 import LiveMarketTest from "../components/LiveMarketTest";
 // import LiveTrendTest from "../components/LiveTrendTest";
 
+import { useState } from "react";
+import AddInvestmentModal from "../components/AddInvestmentModal";
+
 function Dashboard() {
+
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const {
     portfolio,
@@ -31,7 +36,12 @@ function Dashboard() {
           <p className="eyebrow">Momentum dashboard</p>
           <h2>Your financial command center</h2>
         </div>
-        <button className="primary-button">Add Investment</button>
+        <button
+          className="primary-button"
+          onClick={() => setIsAddModalOpen(true)}
+        >
+          Add Investment
+        </button>
       </div>
 
       <div className="card-grid">
@@ -113,6 +123,11 @@ function Dashboard() {
           );
         })}
       </div>
+
+      <AddInvestmentModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+      />
     </section>
   );
 }
