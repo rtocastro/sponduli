@@ -798,6 +798,47 @@ button {
   margin-top: 18px;
 }
 
+.evidence-meter {
+  margin-top: 20px;
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.evidence-meter-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.evidence-meter-header span {
+  color: #9fb8aa;
+  font-weight: 800;
+}
+
+.evidence-meter-header strong {
+  color: #f4c542;
+}
+
+.evidence-bar {
+  height: 12px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.evidence-bar div {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #00a86b, #f4c542);
+}
+
+.evidence-meter p {
+  margin: 10px 0 0;
+  color: #dfffea;
+}
+
 @media (max-width: 700px) {
   .investment-preview {
     grid-template-columns: 1fr;

@@ -1,5 +1,6 @@
 import watchlist from "../data/mockWatchlist";
 import { useSettings } from "../context/SettingsContext";
+import EvidenceMeter from "../components/EvidenceMeter";
 import { useState } from "react";
 import AddFromWatchlistModal from "../components/AddFromWatchlistModal";
 import {
@@ -39,6 +40,8 @@ function Watchlist() {
                         item,
                         minimumEthicalScore
                     );
+
+                    const evidenceScore = momentumScore;
 
                     return (
                         <article className="watchlist-card" key={item.id}>
@@ -92,6 +95,8 @@ function Watchlist() {
                                     Soon™
                                 </strong>
                             </div>
+
+                            <EvidenceMeter score={evidenceScore} />
 
                             <div className="opportunity-callout">
                                 {isBelowEthicalMinimum && (
