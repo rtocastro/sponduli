@@ -55,3 +55,33 @@ export function getOpportunityType(item) {
 
   return "Monitor Only";
 }
+
+export function getEvidenceReasons(item, minimumEthicalScore = 80) {
+  const reasons = [];
+
+  if (item.oneMonthTrend > 0) {
+    reasons.push("Positive 1 month trend");
+  }
+
+  if (item.threeMonthTrend > 0) {
+    reasons.push("Positive 3 month trend");
+  }
+
+  if (item.sixMonthTrend > 0) {
+    reasons.push("Positive 6 month trend");
+  }
+
+  if (item.ethicalScore >= minimumEthicalScore) {
+    reasons.push("Meets your ethical threshold");
+  }
+
+  if (item.volatility === "low") {
+    reasons.push("Lower volatility profile");
+  }
+
+  if (item.volatility === "medium") {
+    reasons.push("Moderate volatility profile");
+  }
+
+  return reasons;
+}

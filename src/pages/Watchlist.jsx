@@ -4,9 +4,10 @@ import EvidenceMeter from "../components/EvidenceMeter";
 import { useState } from "react";
 import AddFromWatchlistModal from "../components/AddFromWatchlistModal";
 import {
-    calculateMomentumScore,
-    calculateOpportunityScore,
-    getOpportunityType,
+  calculateMomentumScore,
+  calculateOpportunityScore,
+  getOpportunityType,
+  getEvidenceReasons,
 } from "../utils/momentumEngine";
 
 function Watchlist() {
@@ -40,6 +41,7 @@ function Watchlist() {
                         item,
                         minimumEthicalScore
                     );
+                    const evidenceReasons = getEvidenceReasons(item, minimumEthicalScore);
 
                     const evidenceScore = momentumScore;
 
@@ -96,7 +98,7 @@ function Watchlist() {
                                 </strong>
                             </div>
 
-                            <EvidenceMeter score={evidenceScore} />
+                            <EvidenceMeter score={evidenceScore} reasons={evidenceReasons} />
 
                             <div className="opportunity-callout">
                                 {isBelowEthicalMinimum && (

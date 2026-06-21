@@ -1,4 +1,4 @@
-function EvidenceMeter({ score = 0, label = "Evidence Meter" }) {
+function EvidenceMeter({ score = 0, reasons = [], label = "Evidence Meter" }) {
   const safeScore = Math.max(0, Math.min(100, score));
 
   let strength = "Weak";
@@ -18,6 +18,14 @@ function EvidenceMeter({ score = 0, label = "Evidence Meter" }) {
       </div>
 
       <p>{strength} evidence</p>
+
+      {reasons.length > 0 && (
+        <ul className="evidence-reasons">
+          {reasons.map((reason) => (
+            <li key={reason}>✓ {reason}</li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
