@@ -848,6 +848,42 @@ button {
   font-size: 0.92rem;
 }
 
+.top-opportunity-card {
+  margin-top: 18px;
+  padding: 26px;
+  border-radius: 28px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(0, 168, 107, 0.18),
+      rgba(244, 197, 66, 0.12)
+    );
+  border: 1px solid rgba(244, 197, 66, 0.22);
+}
+
+.top-opportunity-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+.top-opportunity-header h3 {
+  margin: 8px 0 4px;
+  font-size: clamp(2rem, 5vw, 4rem);
+}
+
+.top-opportunity-header p {
+  margin: 0;
+  color: #9fb8aa;
+}
+
+@media (max-width: 700px) {
+  .top-opportunity-header {
+    flex-direction: column;
+  }
+}
+
 @media (max-width: 700px) {
   .investment-preview {
     grid-template-columns: 1fr;

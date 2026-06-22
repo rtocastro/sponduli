@@ -4,6 +4,7 @@ import { usePortfolio } from "../context/PortfolioContext";
 import { useSettings } from "../context/SettingsContext";
 import LiveMarketTest from "../components/LiveMarketTest";
 // import LiveTrendTest from "../components/LiveTrendTest";
+import TopOpportunityCard from "../components/TopOpportunityCard";
 
 import { useState } from "react";
 import AddInvestmentModal from "../components/AddInvestmentModal";
@@ -84,6 +85,7 @@ function Dashboard() {
         </article>
       </div>
 
+      <TopOpportunityCard />
       <LiveMarketTest />
       {/* <LiveTrendTest /> */}
 
