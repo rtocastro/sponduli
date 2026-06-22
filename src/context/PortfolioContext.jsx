@@ -1,88 +1,134 @@
 
 import portfolioData from "../data/mockPortfolio";
+import { getMultipleQuotes } from "../services/marketService";
 import { calculatePosition, getRecommendation } from "../utils/rulesEngine";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 const PortfolioContext = createContext();
 
 export function PortfolioProvider({ children }) {
-const [rawPortfolio, setRawPortfolio] = useState(() => {
-  const savedPortfolio = localStorage.getItem("sponduli-portfolio");
+    const [livePrices, setLivePrices] = useState({});
+    const [isLoadingPrices, setIsLoadingPrices] = useState(false);
 
-  if (savedPortfolio) {
-    return JSON.parse(savedPortfolio);
-  }
+    const [rawPortfolio, setRawPortfolio] = useState(() => {
+        const savedPortfolio = localStorage.getItem("sponduli-portfolio");
 
-  return portfolioData;
-});
+        if (savedPortfolio) {
+            return JSON.parse(savedPortfolio);
+        }
 
-const portfolio = useMemo(() => {
-  return rawPortfolio.map((position) => ({
-    ...position,
-    stats: calculatePosition(position),
-    recommendation: getRecommendation(position),
-  }));
-}, [rawPortfolio]);
+        return portfolioData;
+    });
 
-useEffect(() => {
-  localStorage.setItem("sponduli-portfolio", JSON.stringify(rawPortfolio));
-}, [rawPortfolio]);
+    useEffect(() => {
+        async function fetchLivePrices() {
+            try {
+                setIsLoadingPrices(true);
 
-function addInvestment(newInvestment) {
-  setRawPortfolio((currentPortfolio) => [
-    ...currentPortfolio,
-    {
-      id: crypto.randomUUID(),
-      ...newInvestment,
-    },
-  ]);
-}
+                const symbols = rawPortfolio.map((item) => item.ticker);
+                const results = await getMultipleQuotes(symbols);
 
-  const totals = useMemo(() => {
-    return portfolio.reduce(
-      (acc, position) => {
-        acc.invested += position.stats.invested;
-        acc.currentValue += position.stats.currentValue;
-        acc.profit += position.stats.profit;
-        return acc;
-      },
-      {
-        invested: 0,
-        currentValue: 0,
-        profit: 0,
-      }
+                const priceMap = {};
+
+                results.forEach(({ symbol, quote }) => {
+                    if (quote && quote.c > 0) {
+                        priceMap[symbol] = quote.c;
+                    }
+                });
+
+                setLivePrices(priceMap);
+            } catch (error) {
+                console.error("Failed to fetch live prices", error);
+            } finally {
+                setIsLoadingPrices(false);
+            }
+        }
+
+        if (rawPortfolio.length > 0) {
+            fetchLivePrices();
+        }
+    }, [rawPortfolio]);
+
+    const portfolio = useMemo(() => {
+        return rawPortfolio.map((position) => {
+            const livePrice = livePrices[position.ticker];
+
+            const enrichedPosition = {
+                ...position,
+                currentPrice: livePrice || position.currentPrice,
+            };
+
+            return {
+                ...enrichedPosition,
+                stats: calculatePosition(enrichedPosition),
+                recommendation: getRecommendation(enrichedPosition),
+            };
+        });
+    }, [rawPortfolio, livePrices]);
+
+
+
+    useEffect(() => {
+        localStorage.setItem("sponduli-portfolio", JSON.stringify(rawPortfolio));
+    }, [rawPortfolio]);
+
+    function addInvestment(newInvestment) {
+        setRawPortfolio((currentPortfolio) => [
+            ...currentPortfolio,
+            {
+                id: crypto.randomUUID(),
+                ...newInvestment,
+            },
+        ]);
+    }
+
+    const totals = useMemo(() => {
+        return portfolio.reduce(
+            (acc, position) => {
+                acc.invested += position.stats.invested;
+                acc.currentValue += position.stats.currentValue;
+                acc.profit += position.stats.profit;
+                return acc;
+            },
+            {
+                invested: 0,
+                currentValue: 0,
+                profit: 0,
+            }
+        );
+    }, [portfolio]);
+
+    const totalGainPercent = (totals.profit / totals.invested) * 100;
+    const millionGoalPercent = (totals.currentValue / 1000000) * 100;
+
+    const topRecommendation = [...portfolio].sort(
+        (a, b) => b.recommendation.confidence - a.recommendation.confidence
+    )[0];
+
+    return (
+        <PortfolioContext.Provider
+            value={{
+                portfolio,
+                totals,
+                totalGainPercent,
+                millionGoalPercent,
+                topRecommendation,
+                addInvestment,
+                isLoadingPrices,
+                livePrices,
+            }}
+        >
+            {children}
+        </PortfolioContext.Provider>
     );
-  }, [portfolio]);
-
-  const totalGainPercent = (totals.profit / totals.invested) * 100;
-  const millionGoalPercent = (totals.currentValue / 1000000) * 100;
-
-  const topRecommendation = [...portfolio].sort(
-    (a, b) => b.recommendation.confidence - a.recommendation.confidence
-  )[0];
-
-  return (
-    <PortfolioContext.Provider
-      value={{
-        portfolio,
-        totals,
-        totalGainPercent,
-        millionGoalPercent,
-        topRecommendation,
-        addInvestment,
-      }}
-    >
-      {children}
-    </PortfolioContext.Provider>
-  );
 }
 
 export function usePortfolio() {
-  const context = useContext(PortfolioContext);
+    const context = useContext(PortfolioContext);
 
-  if (!context) {
-    throw new Error("usePortfolio must be used inside PortfolioProvider");
-  }
+    if (!context) {
+        throw new Error("usePortfolio must be used inside PortfolioProvider");
+    }
 
-  return context;
+    return context;
 }

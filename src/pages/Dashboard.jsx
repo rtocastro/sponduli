@@ -1,5 +1,3 @@
-import portfolio from "../data/mockPortfolio";
-import { calculatePosition, getRecommendation } from "../utils/rulesEngine";
 import { usePortfolio } from "../context/PortfolioContext";
 import { useSettings } from "../context/SettingsContext";
 import LiveMarketTest from "../components/LiveMarketTest";
@@ -19,6 +17,7 @@ function Dashboard() {
     totalGainPercent,
     millionGoalPercent,
     topRecommendation,
+    isLoadingPrices,
   } = usePortfolio();
 
   const {
@@ -44,6 +43,10 @@ function Dashboard() {
           Add Investment
         </button>
       </div>
+
+      {isLoadingPrices && (
+        <p className="live-status">Updating live market prices...</p>
+      )}
 
       <div className="card-grid">
         <article className="card hero-card">
@@ -100,8 +103,8 @@ function Dashboard() {
 
       <div className="holdings-list">
         {portfolio.map((position) => {
-          const stats = calculatePosition(position);
-          const recommendation = getRecommendation(position);
+          const stats = position.stats;
+          const recommendation = position.recommendation;
 
           return (
             <article className="holding-card" key={position.id}>
