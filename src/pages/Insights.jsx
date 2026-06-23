@@ -1,5 +1,5 @@
 import { usePortfolio } from "../context/PortfolioContext";
-import watchlist from "../data/mockWatchlisst";
+import watchlist from "../data/mockWatchlist";
 import {
   generatePortfolioInsights,
   generateWatchlistInsights,

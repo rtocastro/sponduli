@@ -1,5 +1,5 @@
 import { useState } from "react";
-import watchlist from "../data/mockWatchlisst";
+import watchlist from "../data/mockWatchlist";
 import AddFromWatchlistModal from "./AddFromWatchlistModal";
 import EvidenceMeter from "./EvidenceMeter";
 import LiveEvidenceMeter from "./LiveEvidenceMeter";

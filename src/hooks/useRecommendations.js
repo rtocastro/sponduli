@@ -1,6 +1,6 @@
 import { usePortfolio } from "../context/PortfolioContext";
 import { useSettings } from "../context/SettingsContext";
-import watchlist from "../data/mockWatchlisst";
+import watchlist from "../data/mockWatchlist";
 import { buildRecommendationSummary } from "../services/recommendationService";
 
 export function useRecommendations() {
