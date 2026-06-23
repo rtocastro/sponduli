@@ -10,6 +10,10 @@ import {
     getEvidenceReasons,
     getOpportunityType,
 } from "../utils/momentumEngine";
+import {
+    calculateSponduliRating,
+    getSponduliTier,
+} from "../utils/sponduliEngine";
 
 function TopOpportunityCard() {
     const { minimumEthicalScore } = useSettings();
@@ -41,6 +45,20 @@ function TopOpportunityCard() {
 
     if (!topOpportunity) return null;
 
+
+    const [liveEvidenceScore, setLiveEvidenceScore] = useState(null);
+
+    const evidenceForRating =
+        liveEvidenceScore ?? topOpportunity.evidenceScore;
+
+    const sponduliRating = calculateSponduliRating(
+        topOpportunity.strategyMatch,
+        evidenceForRating
+    );
+
+    const sponduliTier = getSponduliTier(sponduliRating);
+
+
     return (
         <article className="top-opportunity-card">
             <div className="top-opportunity-header">
@@ -54,12 +72,18 @@ function TopOpportunityCard() {
                     <strong>{topOpportunity.strategyMatch}</strong>
                     <span>Strategy Match</span>
                 </div>
+                <div className="sponduli-rating-card">
+                    <span>Sponduli Rating</span>
+                    <strong>{sponduliRating}/100</strong>
+                    <p>{sponduliTier}</p>
+                </div>
             </div>
 
-            <LiveEvidenceMeter
-                item={topOpportunity}
-                minimumEthicalScore={minimumEthicalScore}
-            />
+<LiveEvidenceMeter
+  item={topOpportunity}
+  minimumEthicalScore={minimumEthicalScore}
+  onEvidenceLoaded={setLiveEvidenceScore}
+/>
 
             <div className="opportunity-callout">
                 <strong>{topOpportunity.opportunityType}</strong>

@@ -1,12 +1,19 @@
 import EvidenceMeter from "./EvidenceMeter";
+import { useEffect } from "react";
 import { useLiveEvidence } from "../hooks/useLiveEvidence";
 
-function LiveEvidenceMeter({ item, minimumEthicalScore }) {
+function LiveEvidenceMeter({ item, minimumEthicalScore, onEvidenceLoaded }) {
   const evidence = useLiveEvidence(
     item.ticker,
     item.ethicalScore,
     minimumEthicalScore
   );
+
+  useEffect(() => {
+    if (evidence.score !== null && onEvidenceLoaded) {
+      onEvidenceLoaded(evidence.score);
+    }
+  }, [evidence.score, onEvidenceLoaded]);
 
   if (evidence.loading) {
     return <p className="live-status">Checking live evidence...</p>;
