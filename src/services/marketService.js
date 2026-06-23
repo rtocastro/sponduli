@@ -42,3 +42,39 @@ export async function getMultipleQuotes(symbols = []) {
     }))
   );
 }
+
+export async function getCompanyNews(symbol) {
+  const apiKey = import.meta.env.VITE_FINNHUB_API_KEY;
+
+  const to = new Date();
+  const from = new Date();
+  from.setDate(to.getDate() - 30);
+
+  const formatDate = (date) => date.toISOString().split("T")[0];
+
+  const response = await fetch(
+    `${FINNHUB_BASE_URL}/company-news?symbol=${symbol}&from=${formatDate(
+      from
+    )}&to=${formatDate(to)}&token=${apiKey}`
+  );
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch news for ${symbol}`);
+  }
+
+  return response.json();
+}
+
+export async function getEarningsSurprises(symbol) {
+  const apiKey = import.meta.env.VITE_FINNHUB_API_KEY;
+
+  const response = await fetch(
+    `${FINNHUB_BASE_URL}/stock/earnings?symbol=${symbol}&token=${apiKey}`
+  );
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch earnings for ${symbol}`);
+  }
+
+  return response.json();
+}
