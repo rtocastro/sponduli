@@ -1,4 +1,4 @@
-import watchlist from "../data/mockWatchlist";
+import watchlist from "../data/mockWatchlisst";
 import { useSettings } from "../context/SettingsContext";
 import EvidenceMeter from "../components/EvidenceMeter";
 import { useState } from "react";
