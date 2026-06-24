@@ -98,8 +98,11 @@ export function PortfolioProvider({ children }) {
         );
     }, [portfolio]);
 
-    const totalGainPercent = (totals.profit / totals.invested) * 100;
-    const millionGoalPercent = (totals.currentValue / 1000000) * 100;
+const totalGainPercent =
+  totals.invested > 0 ? (totals.profit / totals.invested) * 100 : 0;
+
+const millionGoalPercent =
+  totals.currentValue > 0 ? (totals.currentValue / 1000000) * 100 : 0;
 
     const topRecommendation = [...portfolio].sort(
         (a, b) => b.recommendation.confidence - a.recommendation.confidence

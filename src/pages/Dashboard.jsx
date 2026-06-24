@@ -94,14 +94,24 @@ function Dashboard() {
       <LiveEvidenceTest />
       {/* <LiveTrendTest /> */}
 
-      <article className="card recommendation-card">
-        <p>Next Best Action</p>
-        <h3>
-          {topRecommendation.recommendation.action}:{" "}
-          {topRecommendation.ticker}
-        </h3>
-        <span>{topRecommendation.recommendation.reason}</span>
-      </article>
+{topRecommendation ? (
+  <article className="card recommendation-card">
+    <p>Next Best Action</p>
+    <h3>
+      {topRecommendation.recommendation.action}: {topRecommendation.ticker}
+    </h3>
+    <span>{topRecommendation.recommendation.reason}</span>
+  </article>
+) : (
+  <article className="card recommendation-card">
+    <p>Next Best Action</p>
+    <h3>No holdings yet</h3>
+    <span>
+      Add a real investment from Opportunities to start getting portfolio-based
+      recommendations.
+    </span>
+  </article>
+)}
 
       <div className="holdings-list">
         {portfolio.map((position) => {
