@@ -1,14 +1,17 @@
 import watchlist from "../data/mockWatchlist";
 import { useSettings } from "../context/SettingsContext";
 import EvidenceMeter from "../components/EvidenceMeter";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getMultipleQuotes } from "../services/marketService";
 import AddFromWatchlistModal from "../components/AddFromWatchlistModal";
 import {
-  calculateMomentumScore,
-  calculateOpportunityScore,
-  getOpportunityType,
-  getEvidenceReasons,
+    calculateMomentumScore,
+    calculateOpportunityScore,
+    getOpportunityType,
+    getEvidenceReasons,
 } from "../utils/momentumEngine";
+
+
 
 function Watchlist() {
 
@@ -23,6 +26,38 @@ function Watchlist() {
 
     // const { minimumEthicalScore } = useSettings();
 
+    const [livePrices, setLivePrices] = useState({});
+    const [isLoadingLivePrices, setIsLoadingLivePrices] = useState(false);
+
+    useEffect(() => {
+        async function fetchWatchlistPrices() {
+            try {
+                setIsLoadingLivePrices(true);
+
+                const symbols = watchlist.map((item) => item.ticker);
+                const results = await getMultipleQuotes(symbols);
+
+                const priceMap = {};
+
+                results.forEach(({ symbol, quote }) => {
+                    if (quote && quote.c > 0) {
+                        priceMap[symbol] = quote.c;
+                    }
+                });
+
+                setLivePrices(priceMap);
+            } catch (error) {
+                console.error("Failed to fetch watchlist prices", error);
+            } finally {
+                setIsLoadingLivePrices(false);
+            }
+        }
+
+        fetchWatchlistPrices();
+    }, []);
+
+
+
     return (
         <section className="page-section">
             <div className="dashboard-header">
@@ -31,9 +66,18 @@ function Watchlist() {
                     <h2>Potential opportunities</h2>
                 </div>
             </div>
+            {isLoadingLivePrices && (
+  <p className="live-status">Updating live watchlist prices...</p>
+)}
 
             <div className="watchlist-grid">
                 {sortedWatchlist.map((item) => {
+                    const livePrice = livePrices[item.ticker];
+
+                    const enrichedItem = {
+                        ...item,
+                        currentPrice: livePrice || item.currentPrice,
+                    };
                     const momentumScore = calculateMomentumScore(item);
                     const opportunityType = getOpportunityType(item);
                     const isBelowEthicalMinimum = item.ethicalScore < minimumEthicalScore;
@@ -82,6 +126,12 @@ function Watchlist() {
                                         {item.ethicalScore}/100
                                     </strong>
                                 </div>
+                                <div>
+                                    <span>Live Price</span>
+                                    <strong>
+                                        {livePrice ? `$${livePrice.toFixed(2)}` : "Loading"}
+                                    </strong>
+                                </div>
                             </div>
 
                             <div>
@@ -114,7 +164,7 @@ function Watchlist() {
 
                             <button
                                 className="primary-button watchlist-add-button"
-                                onClick={() => setSelectedItem(item)}
+                                onClick={() => setSelectedItem(enrichedItem)}
                             >
                                 Add to Portfolio
                             </button>
