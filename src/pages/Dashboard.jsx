@@ -64,11 +64,11 @@ function Dashboard() {
           <span>Since starting positions</span>
         </article>
 
-        <article className="card">
+        {/* <article className="card">
           <p>Momentum Score</p>
           <h3>87</h3>
           <span>Based on mock trend strength</span>
-        </article>
+        </article> */}
 
         <article className="card">
           <p>Million Dollar Goal</p>
