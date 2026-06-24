@@ -1,20 +1,41 @@
-import { useState } from "react";
-import {
-  ethicalFilters,
-  investmentPhilosophy,
-} from "../data/mockEthics";
+import { useEffect, useState } from "react";
+import { ethicalFilters, investmentPhilosophy } from "../data/mockEthics";
 
 function Ethics() {
-  const [filters, setFilters] = useState(ethicalFilters);
-  const [philosophy, setPhilosophy] = useState(investmentPhilosophy);
-  const [minimumScore, setMinimumScore] = useState(80);
+  const [filters, setFilters] = useState(() => {
+    const saved = localStorage.getItem("sponduli-ethics-filters");
+    return saved ? JSON.parse(saved) : ethicalFilters;
+  });
+
+  const [philosophy, setPhilosophy] = useState(() => {
+    const saved = localStorage.getItem("sponduli-investment-philosophy");
+    return saved ? JSON.parse(saved) : investmentPhilosophy;
+  });
+
+  const [minimumScore, setMinimumScore] = useState(() => {
+    const saved = localStorage.getItem("sponduli-minimum-ethical-score");
+    return saved ? Number(saved) : 80;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("sponduli-ethics-filters", JSON.stringify(filters));
+  }, [filters]);
+
+  useEffect(() => {
+    localStorage.setItem(
+      "sponduli-investment-philosophy",
+      JSON.stringify(philosophy)
+    );
+  }, [philosophy]);
+
+  useEffect(() => {
+    localStorage.setItem("sponduli-minimum-ethical-score", String(minimumScore));
+  }, [minimumScore]);
 
   function toggleFilter(id) {
     setFilters((currentFilters) =>
       currentFilters.map((filter) =>
-        filter.id === id
-          ? { ...filter, enabled: !filter.enabled }
-          : filter
+        filter.id === id ? { ...filter, enabled: !filter.enabled } : filter
       )
     );
   }

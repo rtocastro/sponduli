@@ -17,7 +17,7 @@ export function PortfolioProvider({ children }) {
             return JSON.parse(savedPortfolio);
         }
 
-        return portfolioData;
+        return [];
     });
 
     useEffect(() => {

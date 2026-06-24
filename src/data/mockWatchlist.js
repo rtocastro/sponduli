@@ -1,7 +1,7 @@
 const watchlist = [ 
     {
         id: 1,
-        ticker: "ICLN",
+        ticker: "SPCX",
         name: "iShares Global Clean Energy ETF",
         category: "Long-Term",
         currentPrice: 369,

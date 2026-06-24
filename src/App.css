@@ -910,6 +910,20 @@ button {
   color: #dfffea;
 }
 
+.empty-state-card {
+  max-width: 760px;
+}
+
+.empty-state-card h3 {
+  margin: 10px 0;
+  font-size: 1.8rem;
+}
+
+.empty-state-card p {
+  color: #9fb8aa;
+  line-height: 1.6;
+}
+
 @media (max-width: 700px) {
   .top-opportunity-header {
     flex-direction: column;
