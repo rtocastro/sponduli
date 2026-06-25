@@ -924,6 +924,30 @@ button {
   line-height: 1.6;
 }
 
+.sponduli-breakdown {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.sponduli-breakdown div {
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.sponduli-breakdown span {
+  display: block;
+  color: #9fb8aa;
+  font-size: 0.78rem;
+  margin-bottom: 5px;
+}
+
+.sponduli-breakdown strong {
+  color: #f4c542;
+}
+
 @media (max-width: 700px) {
   .top-opportunity-header {
     flex-direction: column;

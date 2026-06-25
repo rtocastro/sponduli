@@ -1,109 +1,149 @@
 import { useEffect, useState } from "react";
 import opportunityUniverse from "../data/opportunityUniverse";
 import {
-  getCompanyNews,
-  getEarningsSurprises,
-  getMultipleQuotes,
+    getCompanyNews,
+    getEarningsSurprises,
+    getMultipleQuotes,
 } from "../services/marketService";
 import { calculateEvidenceScore } from "../utils/evidenceEngine";
 import {
-  calculateOpportunityRank,
-  getOpportunityReason,
-  getOpportunityTier,
+    calculateOpportunityRank,
+    getOpportunityReason,
+    getOpportunityTier,
 } from "../utils/opportunityEngine";
+import {
+    calculateSponduliScore,
+    getSponduliBreakdown,
+    getSponduliTier,
+} from "../utils/decisionEngine";
 
 export function useOpportunities(minimumEthicalScore = 80, limit = 3) {
-  const [opportunities, setOpportunities] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+    const [opportunities, setOpportunities] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
-  useEffect(() => {
-    async function scanOpportunities() {
-      try {
-        setLoading(true);
-        setError("");
+    useEffect(() => {
+        async function scanOpportunities() {
+            try {
+                setLoading(true);
+                setError("");
 
-        const eligibleUniverse = opportunityUniverse.filter(
-          (item) => item.ethicalScore >= minimumEthicalScore
-        );
+                const eligibleUniverse = opportunityUniverse.filter(
+                    (item) => item.ethicalScore >= minimumEthicalScore
+                );
 
-        const quoteResults = await getMultipleQuotes(
-          eligibleUniverse.map((item) => item.ticker)
-        );
+                const quoteResults = await getMultipleQuotes(
+                    eligibleUniverse.map((item) => item.ticker)
+                );
 
-        const quoteMap = {};
-        quoteResults.forEach(({ symbol, quote }) => {
-          if (quote && quote.c > 0) {
-            quoteMap[symbol] = quote;
-          }
-        });
+                const quoteMap = {};
+                quoteResults.forEach(({ symbol, quote }) => {
+                    if (quote && quote.c > 0) {
+                        quoteMap[symbol] = quote;
+                    }
+                });
 
-        const enriched = await Promise.all(
-          eligibleUniverse.map(async (item) => {
-            const [news, earnings] = await Promise.all([
-              getCompanyNews(item.ticker),
-              getEarningsSurprises(item.ticker),
-            ]);
+                const enriched = await Promise.all(
+                    eligibleUniverse.map(async (item) => {
+                        const [news, earnings] = await Promise.all([
+                            getCompanyNews(item.ticker),
+                            getEarningsSurprises(item.ticker),
 
-            const newsCount = Array.isArray(news) ? news.length : 0;
-            const earningsCount = Array.isArray(earnings)
-              ? earnings.length
-              : 0;
+                        ]);
 
-            const evidenceScore = calculateEvidenceScore({
-              newsCount,
-              earningsCount,
-              ethicalScore: item.ethicalScore,
-            });
+                        const newsCount = Array.isArray(news) ? news.length : 0;
+                        const earningsCount = Array.isArray(earnings)
+                            ? earnings.length
+                            : 0;
 
-            const opportunityRank = calculateOpportunityRank({
-              ethicalScore: item.ethicalScore,
-              evidenceScore,
-              newsCount,
-              earningsCount,
-              volatility: item.volatility,
-            });
+                        const evidenceScore = calculateEvidenceScore({
+                            newsCount,
+                            earningsCount,
+                            ethicalScore: item.ethicalScore,
+                        });
 
-            return {
-              ...item,
-              currentPrice: quoteMap[item.ticker]?.c || null,
-              dayChange: quoteMap[item.ticker]?.d || 0,
-              dayChangePercent: quoteMap[item.ticker]?.dp || 0,
-              newsCount,
-              earningsCount,
-              evidenceScore,
-              opportunityRank,
-              opportunityTier: getOpportunityTier(opportunityRank),
-              evidenceReasons: getOpportunityReason({
-                ...item,
-                newsCount,
-                earningsCount,
-              }),
-              reason:
-                "Generated from live quote, news, earnings, and your ethical settings.",
-            };
-          })
-        );
+                        const newsScore = Math.min(newsCount * 5, 100);
+                        const earningsScore = Math.min(earningsCount * 25, 100);
 
-        const top = enriched
-          .sort((a, b) => b.opportunityRank - a.opportunityRank)
-          .slice(0, limit);
+                        const riskScore =
+                            item.volatility === "low" ? 92 : item.volatility === "medium" ? 78 : 58;
 
-        setOpportunities(top);
-      } catch (err) {
-        console.error(err);
-        setError("Could not scan live opportunities.");
-      } finally {
-        setLoading(false);
-      }
-    }
+                        const portfolioFit = item.category === "Dividend" ? 88 : 80;
+                        const diversification = item.category === "Broad Market" ? 90 : 78;
 
-    scanOpportunities();
-  }, [minimumEthicalScore, limit]);
+                        const sponduliScore = calculateSponduliScore({
+                            ethics: item.ethicalScore,
+                            evidence: evidenceScore,
+                            news: newsScore,
+                            earnings: earningsScore,
+                            portfolioFit,
+                            risk: riskScore,
+                            diversification,
+                            settings: {
+                                longTermSplit: 50,
+                                momentumSplit: 50,
+                            },
+                        });
 
-  return {
-    opportunities,
-    loading,
-    error,
-  };
+                        const sponduliBreakdown = getSponduliBreakdown({
+                            ethics: item.ethicalScore,
+                            evidence: evidenceScore,
+                            news: newsScore,
+                            earnings: earningsScore,
+                            portfolioFit,
+                            risk: riskScore,
+                            diversification,
+                        });
+
+                        const opportunityRank = calculateOpportunityRank({
+                            ethicalScore: item.ethicalScore,
+                            evidenceScore,
+                            newsCount,
+                            earningsCount,
+                            volatility: item.volatility,
+                        });
+
+                        return {
+                            ...item,
+                            currentPrice: quoteMap[item.ticker]?.c || null,
+                            dayChange: quoteMap[item.ticker]?.d || 0,
+                            dayChangePercent: quoteMap[item.ticker]?.dp || 0,
+                            newsCount,
+                            earningsCount,
+                            evidenceScore,
+                            sponduliScore,
+                            sponduliTier: getSponduliTier(sponduliScore),
+                            sponduliBreakdown,
+                            evidenceReasons: getOpportunityReason({
+                                ...item,
+                                newsCount,
+                                earningsCount,
+                            }),
+                            reason:
+                                "Generated from live quote, news, earnings, and your ethical settings.",
+                        };
+                    })
+                );
+
+                const top = enriched
+                    .sort((a, b) => b.sponduliScore - a.sponduliScore)
+                    .slice(0, limit);
+
+                setOpportunities(top);
+            } catch (err) {
+                console.error(err);
+                setError("Could not scan live opportunities.");
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        scanOpportunities();
+    }, [minimumEthicalScore, limit]);
+
+    return {
+        opportunities,
+        loading,
+        error,
+    };
 }
