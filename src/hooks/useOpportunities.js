@@ -11,11 +11,7 @@ import {
     getOpportunityReason,
     getOpportunityTier,
 } from "../utils/opportunityEngine";
-import {
-    calculateSponduliScore,
-    getSponduliBreakdown,
-    getSponduliTier,
-} from "../utils/decisionEngine";
+import { buildDecision } from "../utils/decisionEngine";
 
 export function useOpportunities(minimumEthicalScore = 80, limit = 3) {
     const [opportunities, setOpportunities] = useState([]);
@@ -85,7 +81,7 @@ export function useOpportunities(minimumEthicalScore = 80, limit = 3) {
                             },
                         });
 
-                        const sponduliBreakdown = getSponduliBreakdown({
+                        const decision = buildDecision({
                             ethics: item.ethicalScore,
                             evidence: evidenceScore,
                             news: newsScore,
@@ -93,6 +89,10 @@ export function useOpportunities(minimumEthicalScore = 80, limit = 3) {
                             portfolioFit,
                             risk: riskScore,
                             diversification,
+                            settings: {
+                                longTermSplit: 50,
+                                momentumSplit: 50,
+                            },
                         });
 
                         const opportunityRank = calculateOpportunityRank({
@@ -111,9 +111,7 @@ export function useOpportunities(minimumEthicalScore = 80, limit = 3) {
                             newsCount,
                             earningsCount,
                             evidenceScore,
-                            sponduliScore,
-                            sponduliTier: getSponduliTier(sponduliScore),
-                            sponduliBreakdown,
+                            decision,
                             evidenceReasons: getOpportunityReason({
                                 ...item,
                                 newsCount,
@@ -126,7 +124,7 @@ export function useOpportunities(minimumEthicalScore = 80, limit = 3) {
                 );
 
                 const top = enriched
-                    .sort((a, b) => b.sponduliScore - a.sponduliScore)
+                    .sort((a, b) => b.decision.score - a.decision.score)
                     .slice(0, limit);
 
                 setOpportunities(top);
