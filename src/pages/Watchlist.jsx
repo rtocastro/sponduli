@@ -1,184 +1,132 @@
-import watchlist from "../data/mockWatchlist";
-import { useSettings } from "../context/SettingsContext";
-import EvidenceMeter from "../components/EvidenceMeter";
-import { useEffect, useState } from "react";
-import { getMultipleQuotes } from "../services/marketService";
+import { useState } from "react";
 import AddFromWatchlistModal from "../components/AddFromWatchlistModal";
-import {
-    calculateMomentumScore,
-    calculateOpportunityScore,
-    getOpportunityType,
-    getEvidenceReasons,
-} from "../utils/momentumEngine";
-
-
+import EvidenceMeter from "../components/EvidenceMeter";
+import { useSettings } from "../context/SettingsContext";
+import { useOpportunities } from "../hooks/useOpportunities";
 
 function Watchlist() {
+  const { minimumEthicalScore } = useSettings();
+  const [selectedItem, setSelectedItem] = useState(null);
 
-    const { minimumEthicalScore } = useSettings();
-    const [selectedItem, setSelectedItem] = useState(null);
+  const {
+    opportunities,
+    loading,
+    error,
+  } = useOpportunities(minimumEthicalScore, 3);
 
-    const sortedWatchlist = [...watchlist].sort(
-        (a, b) =>
-            calculateOpportunityScore(b, minimumEthicalScore) -
-            calculateOpportunityScore(a, minimumEthicalScore)
-    );
+  return (
+    <section className="page-section">
+      <div className="dashboard-header">
+        <div>
+          <p className="eyebrow">Opportunities</p>
+          <h2>Today&apos;s aligned opportunities</h2>
+        </div>
+      </div>
 
-    // const { minimumEthicalScore } = useSettings();
+      {loading && (
+        <p className="live-status">
+          Scanning live quotes, news, and earnings...
+        </p>
+      )}
 
-    const [livePrices, setLivePrices] = useState({});
-    const [isLoadingLivePrices, setIsLoadingLivePrices] = useState(false);
+      {error && <p className="negative">{error}</p>}
 
-    useEffect(() => {
-        async function fetchWatchlistPrices() {
-            try {
-                setIsLoadingLivePrices(true);
+      {!loading && opportunities.length === 0 && (
+        <article className="card empty-state-card">
+          <p className="eyebrow">No opportunities found</p>
+          <h3>No candidates met your current ethical threshold.</h3>
+          <p>
+            Try lowering your minimum ethical score slightly or expanding the
+            opportunity universe later.
+          </p>
+        </article>
+      )}
 
-                const symbols = watchlist.map((item) => item.ticker);
-                const results = await getMultipleQuotes(symbols);
+      <div className="watchlist-grid">
+        {opportunities.map((item) => (
+          <article className="watchlist-card" key={item.id}>
+            <div className="watchlist-topline">
+              <div>
+                <p className="category-pill">{item.category}</p>
+                <h3>{item.ticker}</h3>
+                <p>{item.name}</p>
+              </div>
 
-                const priceMap = {};
-
-                results.forEach(({ symbol, quote }) => {
-                    if (quote && quote.c > 0) {
-                        priceMap[symbol] = quote.c;
-                    }
-                });
-
-                setLivePrices(priceMap);
-            } catch (error) {
-                console.error("Failed to fetch watchlist prices", error);
-            } finally {
-                setIsLoadingLivePrices(false);
-            }
-        }
-
-        fetchWatchlistPrices();
-    }, []);
-
-
-
-    return (
-        <section className="page-section">
-            <div className="dashboard-header">
-                <div>
-                    <p className="eyebrow">Watchlist</p>
-                    <h2>Potential opportunities</h2>
-                </div>
+              <div className="score-badge">
+                <strong>{item.opportunityRank}</strong>
+                <span>Opportunity Rank</span>
+              </div>
             </div>
-            {isLoadingLivePrices && (
-  <p className="live-status">Updating live watchlist prices...</p>
-)}
 
-            <div className="watchlist-grid">
-                {sortedWatchlist.map((item) => {
-                    const livePrice = livePrices[item.ticker];
+            <div className="watchlist-stats">
+              <div>
+                <span>Live Price</span>
+                <strong>
+                  {item.currentPrice ? `$${item.currentPrice.toFixed(2)}` : "N/A"}
+                </strong>
+              </div>
 
-                    const enrichedItem = {
-                        ...item,
-                        currentPrice: livePrice || item.currentPrice,
-                    };
-                    const momentumScore = calculateMomentumScore(item);
-                    const opportunityType = getOpportunityType(item);
-                    const isBelowEthicalMinimum = item.ethicalScore < minimumEthicalScore;
-                    const opportunityScore = calculateOpportunityScore(
-                        item,
-                        minimumEthicalScore
-                    );
-                    const evidenceReasons = getEvidenceReasons(item, minimumEthicalScore);
+              <div>
+                <span>Day Change</span>
+                <strong
+                  className={item.dayChangePercent >= 0 ? "positive" : "negative"}
+                >
+                  {item.dayChangePercent?.toFixed(2)}%
+                </strong>
+              </div>
 
-                    const evidenceScore = momentumScore;
+              <div>
+                <span>Ethical</span>
+                <strong
+                  className={
+                    item.ethicalScore >= minimumEthicalScore
+                      ? "positive"
+                      : "negative"
+                  }
+                >
+                  {item.ethicalScore}/100
+                </strong>
+              </div>
 
-                    return (
-                        <article className="watchlist-card" key={item.id}>
-                            <div className="watchlist-topline">
-                                <div>
-                                    <p className="category-pill">{item.category}</p>
-                                    <h3>{item.ticker}</h3>
-                                    <p>{item.name}</p>
-                                </div>
+              <div>
+                <span>News</span>
+                <strong>{item.newsCount}</strong>
+              </div>
 
-                                <div className="score-badge">
-                                    <strong>{momentumScore}</strong>
-                                    <span>Momentum</span>
-                                </div>
-                            </div>
-
-                            <div className="watchlist-stats">
-                                <div>
-                                    <span>1 Month</span>
-                                    <strong>{item.oneMonthTrend}%</strong>
-                                </div>
-
-                                <div>
-                                    <span>3 Month</span>
-                                    <strong>{item.threeMonthTrend}%</strong>
-                                </div>
-
-                                <div>
-                                    <span>6 Month</span>
-                                    <strong>{item.sixMonthTrend}%</strong>
-                                </div>
-
-                                <div>
-                                    <span>Ethical</span>
-                                    <strong className={isBelowEthicalMinimum ? "negative" : "positive"}>
-                                        {item.ethicalScore}/100
-                                    </strong>
-                                </div>
-                                <div>
-                                    <span>Live Price</span>
-                                    <strong>
-                                        {livePrice ? `$${livePrice.toFixed(2)}` : "Loading"}
-                                    </strong>
-                                </div>
-                            </div>
-
-                            <div>
-                                <span>Strategy Match</span>
-                                <strong className={opportunityScore >= 75 ? "positive" : "negative"}>
-                                    {opportunityScore}/100
-                                </strong>
-                            </div>
-
-                            <div>
-                                <span>Trend Confidence</span>
-                                <strong className="coming-soon-score">
-                                    Soon™
-                                </strong>
-                            </div>
-
-                            <EvidenceMeter score={evidenceScore} reasons={evidenceReasons} />
-
-                            <div className="opportunity-callout">
-                                {isBelowEthicalMinimum && (
-                                    <p className="warning-pill">Below your ethical minimum</p>
-                                )}
-                                <strong>{opportunityType}</strong>
-
-                                <p className="strategy-match-line">
-                                    Strategy Match: {opportunityScore}/100
-                                </p>
-                                <p>{item.reason}</p>
-                            </div>
-
-                            <button
-                                className="primary-button watchlist-add-button"
-                                onClick={() => setSelectedItem(enrichedItem)}
-                            >
-                                Add to Portfolio
-                            </button>
-                        </article>
-                    );
-                })}
+              <div>
+                <span>Earnings</span>
+                <strong>{item.earningsCount}</strong>
+              </div>
             </div>
-            <AddFromWatchlistModal
-                item={selectedItem}
-                isOpen={Boolean(selectedItem)}
-                onClose={() => setSelectedItem(null)}
+
+            <EvidenceMeter
+              score={item.evidenceScore}
+              reasons={item.evidenceReasons}
+              label="Live Evidence Meter"
             />
-        </section>
-    );
+
+            <div className="opportunity-callout">
+              <strong>{item.opportunityTier}</strong>
+              <p>{item.reason}</p>
+            </div>
+
+            <button
+              className="primary-button watchlist-add-button"
+              onClick={() => setSelectedItem(item)}
+            >
+              Add to Portfolio
+            </button>
+          </article>
+        ))}
+      </div>
+
+      <AddFromWatchlistModal
+        item={selectedItem}
+        isOpen={Boolean(selectedItem)}
+        onClose={() => setSelectedItem(null)}
+      />
+    </section>
+  );
 }
 
 export default Watchlist;
