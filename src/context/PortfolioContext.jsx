@@ -1,6 +1,6 @@
 
 import portfolioData from "../data/mockPortfolio";
-import { getMultipleQuotes } from "../services/marketService";
+import { getCachedMultipleQuotes } from "../services/marketService";
 import { calculatePosition, getRecommendation } from "../utils/rulesEngine";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
@@ -26,7 +26,7 @@ export function PortfolioProvider({ children }) {
                 setIsLoadingPrices(true);
 
                 const symbols = rawPortfolio.map((item) => item.ticker);
-                const results = await getMultipleQuotes(symbols);
+                const results = await getCachedMultipleQuotes(symbols);
 
                 const priceMap = {};
 

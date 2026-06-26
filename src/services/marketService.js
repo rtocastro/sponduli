@@ -1,7 +1,10 @@
  const FINNHUB_BASE_URL = "https://finnhub.io/api/v1";
+   import { getCached, setCached } from "../utils/cache";
 
 export async function getStockQuote(symbol) {
+
   const apiKey = import.meta.env.VITE_FINNHUB_API_KEY;
+  
 
   const response = await fetch(
     `${FINNHUB_BASE_URL}/quote?symbol=${symbol}&token=${apiKey}`
@@ -77,4 +80,36 @@ export async function getEarningsSurprises(symbol) {
   }
 
   return response.json();
+}
+
+export async function getCachedStockQuote(symbol) {
+  const cacheKey = `sponduli-quote-${symbol}`;
+  const cached = getCached(cacheKey, 30 * 1000);
+
+  if (cached) {
+    return cached;
+  }
+
+  const quote = await getStockQuote(symbol);
+
+  if (quote && quote.c > 0) {
+    setCached(cacheKey, quote);
+  }
+
+  return quote;
+}
+
+export async function getCachedMultipleQuotes(symbols = []) {
+  const results = [];
+
+  for (const symbol of symbols) {
+    const quote = await getCachedStockQuote(symbol);
+
+    results.push({
+      symbol,
+      quote,
+    });
+  }
+
+  return results;
 }
