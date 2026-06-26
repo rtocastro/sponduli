@@ -98,6 +98,12 @@ export function PortfolioProvider({ children }) {
         );
     }, [portfolio]);
 
+function removeInvestment(id) {
+  setRawPortfolio((currentPortfolio) =>
+    currentPortfolio.filter((position) => position.id !== id)
+  );
+}
+
 const totalGainPercent =
   totals.invested > 0 ? (totals.profit / totals.invested) * 100 : 0;
 
@@ -119,12 +125,15 @@ const millionGoalPercent =
                 addInvestment,
                 isLoadingPrices,
                 livePrices,
+                removeInvestment,
             }}
         >
             {children}
         </PortfolioContext.Provider>
     );
 }
+
+
 
 export function usePortfolio() {
     const context = useContext(PortfolioContext);
@@ -135,3 +144,4 @@ export function usePortfolio() {
 
     return context;
 }
+

@@ -1,8 +1,8 @@
 import { usePortfolio } from "../context/PortfolioContext";
 
 function Holdings() {
-  const { portfolio } = usePortfolio();
-
+  const { portfolio, removeInvestment, } = usePortfolio();
+ 
   return (
     <section className="page-section">
       <div className="dashboard-header">
@@ -59,6 +59,13 @@ function Holdings() {
             </div>
 
             <p className="holding-reason">{position.recommendation.reason}</p>
+
+            <button
+              className="ghost-button"
+              onClick={() => removeInvestment(position.id)}
+            >
+              Remove Holding
+            </button>
           </article>
         ))}
       </div>
