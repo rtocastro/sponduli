@@ -12,6 +12,7 @@ function Watchlist() {
         opportunities,
         loading,
         error,
+        summary,
     } = useOpportunities(minimumEthicalScore, 3);
 
     return (
@@ -23,11 +24,19 @@ function Watchlist() {
                 </div>
             </div>
 
+
+
             {loading && (
                 <p className="live-status">
                     Scanning live quotes, news, and earnings...
                 </p>
             )}
+
+            {summary && (
+  <p className="live-status">
+    Scanned {summary.scannedCount} aligned candidates using live market data.
+  </p>
+)}
 
             {error && <p className="negative">{error}</p>}
 
@@ -120,10 +129,10 @@ function Watchlist() {
                         </div>
 
                         <ul className="decision-explanation-list">
-  {item.decision.explanation.map((reason) => (
-    <li key={reason}>✓ {reason}</li>
-  ))}
-</ul>
+                            {item.decision.explanation.map((reason) => (
+                                <li key={reason}>✓ {reason}</li>
+                            ))}
+                        </ul>
 
                         <button
                             className="primary-button watchlist-add-button"

@@ -5,16 +5,25 @@ import {
     getEarningsSurprises,
     getCachedMultipleQuotes,
 } from "../services/marketService";
+import {
+    getSeedDiscoveryCandidates,
+    getDiscoverySummary,
+} from "../utils/discoveryEngine";
+
+
 import { calculateEvidenceScore } from "../utils/evidenceEngine";
 import { getOpportunityReason } from "../utils/opportunityEngine";
 import { buildDecision } from "../utils/decisionEngine";
 import { runLimited } from "../utils/apiThrottle";
 import { getCached, setCached } from "../utils/cache";
 
+// const [summary, setSummary] = useState(null);
+
 export function useOpportunities(minimumEthicalScore = 80, limit = 3) {
     const [opportunities, setOpportunities] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [summary, setSummary] = useState(null);
 
     useEffect(() => {
         let isMounted = true;
@@ -24,9 +33,12 @@ export function useOpportunities(minimumEthicalScore = 80, limit = 3) {
                 setLoading(true);
                 setError("");
 
-                const eligibleUniverse = opportunityUniverse.filter(
-                    (item) => item.ethicalScore >= minimumEthicalScore
-                );
+                const eligibleUniverse = getSeedDiscoveryCandidates({
+                    minimumEthicalScore,
+                    maxCandidates: 12,
+                });
+
+                setSummary(getDiscoverySummary(eligibleUniverse));
 
                 // Pass 1: fetch quotes for eligible universe
                 const quoteResults = await getCachedMultipleQuotes(
@@ -159,5 +171,6 @@ export function useOpportunities(minimumEthicalScore = 80, limit = 3) {
         opportunities,
         loading,
         error,
+        summary,
     };
 }
