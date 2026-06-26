@@ -53,7 +53,7 @@ function Watchlist() {
                             </div>
 
                             <div className="score-badge">
-                                <strong>{item.sponduliScore}</strong>
+                                <strong>{item.decision.score}</strong>
                                 <span>Sponduli Score</span>
                             </div>
                         </div>
@@ -106,18 +106,24 @@ function Watchlist() {
                         />
 
                         <div className="sponduli-breakdown">
-                            {item.sponduliBreakdown.map((part) => (
-                                <div key={part.label}>
-                                    <span>{part.label}</span>
-                                    <strong>{part.value}/100</strong>
+                            {Object.entries(item.decision.breakdown).map(([label, value]) => (
+                                <div key={label}>
+                                    <span>{label}</span>
+                                    <strong>{value}/100</strong>
                                 </div>
                             ))}
                         </div>
 
                         <div className="opportunity-callout">
-                            <strong>{item.sponduliTier}</strong>
+                            <strong>{item.decision.tier}</strong>
                             <p>{item.reason}</p>
                         </div>
+
+                        <ul className="decision-explanation-list">
+  {item.decision.explanation.map((reason) => (
+    <li key={reason}>✓ {reason}</li>
+  ))}
+</ul>
 
                         <button
                             className="primary-button watchlist-add-button"
