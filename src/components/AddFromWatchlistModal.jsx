@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { usePortfolio } from "../context/PortfolioContext";
+// import { usePortfolio } from "../context/PortfolioContext";
+import { useTransactions } from "../context/TransactionContext";
 import { useTimeline } from "../context/TimelineContext";
 
 function AddFromWatchlistModal({ item, isOpen, onClose }) {
-    const { addInvestment } = usePortfolio();
+    const { addBuyTransaction } = useTransactions();
     const { addTimelineEntry } = useTimeline();
     const [amountInvested, setAmountInvested] = useState("");
 
@@ -12,30 +13,46 @@ function AddFromWatchlistModal({ item, isOpen, onClose }) {
     const buyPrice = item.currentPrice || 100;
     const shares = amountInvested ? Number(amountInvested) / buyPrice : 0;
 
-    function handleSubmit(event) {
-        event.preventDefault();
+function handleSubmit(event) {
+  event.preventDefault();
 
-        addInvestment({
-            ticker: item.ticker,
-            name: item.name,
-            shares: Number(shares.toFixed(4)),
-            costBasis: buyPrice,
-            currentPrice: buyPrice,
-            trend: item.volatility === "high" ? "fast" : "steady",
-            ethicalScore: item.ethicalScore,
-        });
-        addTimelineEntry({
-            type: "investment-added",
-            ticker: item.ticker,
-            name: item.name,
-            amountInvested: Number(amountInvested),
-            ethicalScore: item.ethicalScore,
-            strategyMatch: item.strategyMatch || 80,
-        });
+  const buyPrice = item.currentPrice || 0;
+  const amount = Number(amountInvested);
+  const shares = buyPrice > 0 ? amount / buyPrice : 0;
 
-        setAmountInvested("");
-        onClose();
-    }
+  const transaction = {
+    ticker: item.ticker,
+    name: item.name,
+    amount,
+    shares: Number(shares.toFixed(6)),
+    buyPrice,
+    ethicalScore: item.ethicalScore,
+    source: "opportunities",
+    decisionSnapshot: item.decision || null,
+    evidenceSnapshot: {
+      evidenceScore: item.evidenceScore,
+      newsCount: item.newsCount,
+      earningsCount: item.earningsCount,
+      reasons: item.evidenceReasons || [],
+    },
+  };
+
+  addBuyTransaction(transaction);
+
+  addTimelineEntry({
+    type: "buy",
+    ticker: item.ticker,
+    name: item.name,
+    amountInvested: amount,
+    shares: Number(shares.toFixed(6)),
+    buyPrice,
+    ethicalScore: item.ethicalScore,
+    sponduliScore: item.decision?.score || null,
+  });
+
+  setAmountInvested("");
+  onClose();
+}
 
     return (
         <div className="modal-backdrop">

@@ -1,7 +1,7 @@
 import { usePortfolio } from "../context/PortfolioContext";
 
 function Holdings() {
-  const { portfolio, removeInvestment, } = usePortfolio();
+  const { portfolio } = usePortfolio();
  
   return (
     <section className="page-section">
