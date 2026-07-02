@@ -2,6 +2,10 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { getCachedMultipleQuotes } from "../services/marketService";
 import { calculatePosition, getRecommendation } from "../utils/rulesEngine";
 import { useTransactions } from "./TransactionContext";
+import {
+  buildPortfolioFromTransactions,
+  calculatePortfolioTotals,
+} from "../utils/portfolioEngine";
 
 const PortfolioContext = createContext();
 
@@ -97,21 +101,9 @@ export function PortfolioProvider({ children }) {
     });
   }, [rawPortfolio, livePrices]);
 
-  const totals = useMemo(() => {
-    return portfolio.reduce(
-      (acc, position) => {
-        acc.invested += position.stats.invested;
-        acc.currentValue += position.stats.currentValue;
-        acc.profit += position.stats.profit;
-        return acc;
-      },
-      {
-        invested: 0,
-        currentValue: 0,
-        profit: 0,
-      }
-    );
-  }, [portfolio]);
+const totals = useMemo(() => {
+  return calculatePortfolioTotals(portfolio);
+}, [portfolio]);
 
   const totalGainPercent =
     totals.invested > 0 ? (totals.profit / totals.invested) * 100 : 0;
