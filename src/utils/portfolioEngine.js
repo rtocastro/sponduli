@@ -1,28 +1,36 @@
 export function buildPortfolioFromTransactions(transactions = []) {
   const holdingsMap = {};
 
-  transactions.forEach((transaction) => {
-    if (transaction.type !== "BUY") return;
-
+transactions.forEach((transaction) => {
     if (!holdingsMap[transaction.ticker]) {
-      holdingsMap[transaction.ticker] = {
-        id: transaction.ticker,
-        ticker: transaction.ticker,
-        name: transaction.name,
-        shares: 0,
-        totalInvested: 0,
-        ethicalScore: transaction.ethicalScore || 80,
-        source: transaction.source,
-        transactions: [],
-      };
+        holdingsMap[transaction.ticker] = {
+            id: transaction.ticker,
+            ticker: transaction.ticker,
+            name: transaction.name,
+            shares: 0,
+            totalInvested: 0,
+            ethicalScore: transaction.ethicalScore || 80,
+            source: transaction.source,
+            transactions: [],
+        };
     }
 
-    holdingsMap[transaction.ticker].shares += Number(transaction.shares || 0);
-    holdingsMap[transaction.ticker].totalInvested += Number(
-      transaction.amount || 0
-    );
-    holdingsMap[transaction.ticker].transactions.push(transaction);
-  });
+    const holding = holdingsMap[transaction.ticker];
+
+    if (transaction.type === "BUY") {
+        holding.shares += Number(transaction.shares || 0);
+        holding.totalInvested += Number(transaction.amount || 0);
+    }
+
+    if (transaction.type === "SELL") {
+        holding.shares -= Number(transaction.shares || 0);
+
+        // Never allow negative shares.
+        holding.shares = Math.max(holding.shares, 0);
+    }
+
+    holding.transactions.push(transaction);
+});
 
   return Object.values(holdingsMap).map((holding) => ({
     ...holding,
