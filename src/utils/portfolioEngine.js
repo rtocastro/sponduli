@@ -32,13 +32,22 @@ transactions.forEach((transaction) => {
     holding.transactions.push(transaction);
 });
 
-  return Object.values(holdingsMap).map((holding) => ({
+return Object.values(holdingsMap).map((holding) => {
+  const averageCost =
+    holding.totalInvested > 0 && holding.shares > 0
+      ? holding.totalInvested / holding.shares
+      : 0;
+
+  return {
     ...holding,
-    costBasis:
-      holding.shares > 0 ? holding.totalInvested / holding.shares : 0,
-    currentPrice:
-      holding.shares > 0 ? holding.totalInvested / holding.shares : 0,
-  }));
+    averageCost,
+    costBasis: averageCost,
+    currentPrice: averageCost,
+    totalTransactions: holding.transactions.length,
+    firstPurchase: holding.transactions[holding.transactions.length - 1]?.createdAt,
+    lastPurchase: holding.transactions[0]?.createdAt,
+  };
+});
 }
 
 export function calculatePortfolioTotals(portfolio = []) {
