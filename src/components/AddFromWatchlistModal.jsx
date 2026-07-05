@@ -1,11 +1,9 @@
 import { useState } from "react";
 // import { usePortfolio } from "../context/PortfolioContext";
 import { useTransactions } from "../context/TransactionContext";
-import { useTimeline } from "../context/TimelineContext";
 
 function AddFromWatchlistModal({ item, isOpen, onClose }) {
     const { addBuyTransaction } = useTransactions();
-    const { addTimelineEntry } = useTimeline();
     const [amountInvested, setAmountInvested] = useState("");
 
     if (!isOpen || !item) return null;
