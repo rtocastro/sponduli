@@ -3,6 +3,18 @@ import { usePortfolio } from "../context/PortfolioContext";
 function Holdings() {
   const { portfolio } = usePortfolio();
 
+  function getRecommendationClass(action) {
+    if (action.includes("Exit") || action.includes("Reduce")) {
+      return "negative";
+    }
+
+    if (action.includes("Review") || action.includes("Carefully")) {
+      return "warning";
+    }
+
+    return "positive";
+  }
+
   return (
     <section className="page-section">
       <div className="dashboard-header">
@@ -87,7 +99,13 @@ function Holdings() {
 
               <div>
                 <span>Recommendation</span>
-                <strong>{position.recommendation.action}</strong>
+                <strong
+                  className={`recommendation-badge ${getRecommendationClass(
+                    position.recommendation.action
+                  )}`}
+                >
+                  {position.recommendation.action}
+                </strong>
               </div>
             </div>
 
