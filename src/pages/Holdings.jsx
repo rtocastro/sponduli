@@ -2,7 +2,7 @@ import { usePortfolio } from "../context/PortfolioContext";
 
 function Holdings() {
   const { portfolio } = usePortfolio();
- 
+
   return (
     <section className="page-section">
       <div className="dashboard-header">
@@ -18,6 +18,17 @@ function Holdings() {
             <div>
               <h3>{position.ticker}</h3>
               <p>{position.name}</p>
+              <div className="holding-summary">
+                <span>{position.shares.toFixed(4)} shares</span>
+
+                <span>
+                  Avg Cost: ${position.averageCost.toFixed(2)}
+                </span>
+
+                <span>
+                  Current: ${position.currentPrice.toFixed(2)}
+                </span>
+              </div>
             </div>
 
             <div className="holding-stats-grid">
@@ -44,6 +55,28 @@ function Holdings() {
                   }
                 >
                   {position.stats.gainPercent.toFixed(2)}%
+                </strong>
+              </div>
+              <div>
+                <span>Total Purchases</span>
+                <strong>{position.totalTransactions}</strong>
+              </div>
+
+              <div>
+                <span>First Purchase</span>
+                <strong>
+                  {position.firstPurchase
+                    ? new Date(position.firstPurchase).toLocaleDateString()
+                    : "-"}
+                </strong>
+              </div>
+
+              <div>
+                <span>Latest Purchase</span>
+                <strong>
+                  {position.lastPurchase
+                    ? new Date(position.lastPurchase).toLocaleDateString()
+                    : "-"}
                 </strong>
               </div>
 
