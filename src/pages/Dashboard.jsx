@@ -5,12 +5,17 @@ import LiveMarketTest from "../components/LiveMarketTest";
 import TopOpportunityCard from "../components/TopOpportunityCard";
 import LiveEvidenceTest from "../components/LiveEvidenceTest";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddInvestmentModal from "../components/AddInvestmentModal";
+
+import { useHistory } from "../context/HistoryContext";
 
 function Dashboard() {
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  const { recordSnapshot } = useHistory();
+  
 
   const {
     portfolio,
@@ -29,6 +34,17 @@ function Dashboard() {
     communityAllocation,
   } = useSettings();
 
+
+  useEffect(() => {
+  if (totals.currentValue <= 0) return;
+
+  recordSnapshot({
+    portfolioValue: totals.currentValue,
+    invested: totals.invested,
+    profit: totals.profit,
+    holdingsCount: portfolio.length,
+  });
+}, [totals.currentValue, totals.invested, totals.profit, portfolio.length, recordSnapshot]);
 
   return (
     <section className="dashboard">
