@@ -1,14 +1,7 @@
-import { useEffect, useState } from "react";
+import { useHistory } from "../context/HistoryContext";
 
 function History() {
-  const [history, setHistory] = useState(() => {
-    const saved = localStorage.getItem("sponduli-history");
-    return saved ? JSON.parse(saved) : [];
-  });
-
-  useEffect(() => {
-    localStorage.setItem("sponduli-history", JSON.stringify(history));
-  }, [history]);
+  const { history } = useHistory();
 
   if (history.length === 0) {
     return (
@@ -22,10 +15,10 @@ function History() {
 
         <article className="card empty-state-card">
           <p className="eyebrow">No history yet</p>
-          <h3>Sponduli has not tracked any real portfolio snapshots yet.</h3>
+          <h3>Sponduli has not tracked any portfolio snapshots yet.</h3>
           <p>
-            Once you add real holdings and start checking in over time, your
-            portfolio growth history will appear here.
+            Once you add real holdings and open the Dashboard, your portfolio
+            growth history will appear here.
           </p>
         </article>
       </section>
@@ -36,10 +29,13 @@ function History() {
   const latestEntry = history[history.length - 1];
 
   const totalGrowth = latestEntry.portfolioValue - firstEntry.portfolioValue;
-  const totalGrowthPercent = (totalGrowth / firstEntry.portfolioValue) * 100;
+  const totalGrowthPercent =
+    firstEntry.portfolioValue > 0
+      ? (totalGrowth / firstEntry.portfolioValue) * 100
+      : 0;
 
   const previousEntry = history[history.length - 2];
-  const monthlyGrowth = previousEntry
+  const latestChange = previousEntry
     ? latestEntry.portfolioValue - previousEntry.portfolioValue
     : 0;
 
@@ -68,10 +64,10 @@ function History() {
         </article>
 
         <article className="card">
-          <p>Last Change</p>
-          <h3>${monthlyGrowth.toLocaleString()}</h3>
-          <span className={monthlyGrowth >= 0 ? "positive" : "negative"}>
-            Since last check-in
+          <p>Latest Change</p>
+          <h3>${latestChange.toLocaleString()}</h3>
+          <span className={latestChange >= 0 ? "positive" : "negative"}>
+            Since last snapshot
           </span>
         </article>
 
@@ -96,7 +92,7 @@ function History() {
               <article className="history-row" key={entry.id}>
                 <div>
                   <strong>{entry.date}</strong>
-                  <span>Portfolio check-in</span>
+                  <span>{entry.holdingsCount} holding snapshot</span>
                 </div>
 
                 <div>

@@ -1,4 +1,11 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 const HistoryContext = createContext();
 
@@ -12,17 +19,40 @@ export function HistoryProvider({ children }) {
     localStorage.setItem("sponduli-history", JSON.stringify(history));
   }, [history]);
 
-  function recordSnapshot(snapshot) {
+  const recordSnapshot = useCallback((snapshot) => {
     const today = new Date().toISOString().split("T")[0];
 
     setHistory((currentHistory) => {
-      const alreadyRecordedToday = currentHistory.some(
+      const existingEntry = currentHistory.find(
         (entry) => entry.date === today
       );
 
-      if (alreadyRecordedToday) {
+      const normalizedSnapshot = {
+        portfolioValue: Number(snapshot.portfolioValue.toFixed(2)),
+        invested: Number(snapshot.invested.toFixed(2)),
+        profit: Number(snapshot.profit.toFixed(2)),
+        holdingsCount: snapshot.holdingsCount,
+      };
+
+      if (
+        existingEntry &&
+        existingEntry.portfolioValue === normalizedSnapshot.portfolioValue &&
+        existingEntry.invested === normalizedSnapshot.invested &&
+        existingEntry.profit === normalizedSnapshot.profit &&
+        existingEntry.holdingsCount === normalizedSnapshot.holdingsCount
+      ) {
+        return currentHistory;
+      }
+
+      if (existingEntry) {
         return currentHistory.map((entry) =>
-          entry.date === today ? { ...entry, ...snapshot, date: today } : entry
+          entry.date === today
+            ? {
+                ...entry,
+                ...normalizedSnapshot,
+                date: today,
+              }
+            : entry
         );
       }
 
@@ -31,14 +61,22 @@ export function HistoryProvider({ children }) {
         {
           id: crypto.randomUUID(),
           date: today,
-          ...snapshot,
+          ...normalizedSnapshot,
         },
       ];
     });
-  }
+  }, []);
+
+  const contextValue = useMemo(
+    () => ({
+      history,
+      recordSnapshot,
+    }),
+    [history, recordSnapshot]
+  );
 
   return (
-    <HistoryContext.Provider value={{ history, recordSnapshot }}>
+    <HistoryContext.Provider value={contextValue}>
       {children}
     </HistoryContext.Provider>
   );

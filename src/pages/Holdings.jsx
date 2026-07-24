@@ -111,12 +111,7 @@ function Holdings() {
 
             <p className="holding-reason">{position.recommendation.reason}</p>
 
-            <button
-              className="ghost-button"
-              onClick={() => removeInvestment(position.id)}
-            >
-              Remove Holding
-            </button>
+
           </article>
         ))}
       </div>

@@ -35,16 +35,25 @@ function Dashboard() {
   } = useSettings();
 
 
-  useEffect(() => {
-  if (totals.currentValue <= 0) return;
+useEffect(() => {
+  if (isLoadingPrices || totals.currentValue <= 0) return;
 
-  recordSnapshot({
-    portfolioValue: totals.currentValue,
-    invested: totals.invested,
-    profit: totals.profit,
+  const snapshot = {
+    portfolioValue: Number(totals.currentValue.toFixed(2)),
+    invested: Number(totals.invested.toFixed(2)),
+    profit: Number(totals.profit.toFixed(2)),
     holdingsCount: portfolio.length,
-  });
-}, [totals.currentValue, totals.invested, totals.profit, portfolio.length, recordSnapshot]);
+  };
+
+  recordSnapshot(snapshot);
+}, [
+  isLoadingPrices,
+  totals.currentValue,
+  totals.invested,
+  totals.profit,
+  portfolio.length,
+  recordSnapshot,
+]);
 
   return (
     <section className="dashboard">
