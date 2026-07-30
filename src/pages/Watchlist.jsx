@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import AddFromWatchlistModal from "../components/AddFromWatchlistModal";
 import EvidenceMeter from "../components/EvidenceMeter";
 import { useSettings } from "../context/SettingsContext";
 import { useOpportunities } from "../hooks/useOpportunities";
+import { getTopOverall } from "../engines/opportunityRankingEngine";
 
 function Watchlist() {
     const { minimumEthicalScore } = useSettings();
@@ -14,6 +15,11 @@ function Watchlist() {
         error,
         summary,
     } = useOpportunities(minimumEthicalScore, 3);
+
+    const topOpportunities = useMemo(
+        () => getTopOverall(opportunities, 3),
+        [opportunities]
+    );
 
     return (
         <section className="page-section">
@@ -33,10 +39,10 @@ function Watchlist() {
             )}
 
             {summary && (
-  <p className="live-status">
-    Scanned {summary.scannedCount} aligned candidates using live market data.
-  </p>
-)}
+                <p className="live-status">
+                    Scanned {summary.scannedCount} aligned candidates using live market data.
+                </p>
+            )}
 
             {error && <p className="negative">{error}</p>}
 
@@ -52,13 +58,16 @@ function Watchlist() {
             )}
 
             <div className="watchlist-grid">
-                {opportunities.map((item) => (
+                {topOpportunities.map((item) => (
                     <article className="watchlist-card" key={item.id}>
                         <div className="watchlist-topline">
                             <div>
-                                <p className="category-pill">{item.category}</p>
+                                <p className="category-pill">
+                                    {item.sector} • {item.assetType}
+                                </p>
                                 <h3>{item.ticker}</h3>
                                 <p>{item.name}</p>
+                                <p>{item.category}</p>
                             </div>
 
                             <div className="score-badge">
