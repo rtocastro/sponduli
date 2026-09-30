@@ -41,3 +41,24 @@ export function getTopByAssetType(
     opportunities.filter((item) => item.assetType === assetType)
   ).slice(0, limit);
 }
+
+export function getTopBySectors(opportunities = [], limit = 3) {
+  const sectors = {};
+
+  opportunities.forEach((item) => {
+    if (!item.sector) return;
+
+    if (!sectors[item.sector]) {
+      sectors[item.sector] = [];
+    }
+
+    sectors[item.sector].push(item);
+  });
+
+  return Object.entries(sectors)
+    .map(([sector, items]) => ({
+      sector,
+      opportunities: rankOpportunities(items).slice(0, limit),
+    }))
+    .sort((a, b) => a.sector.localeCompare(b.sector));
+}
