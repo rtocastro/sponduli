@@ -3,7 +3,10 @@ import AddFromWatchlistModal from "../components/AddFromWatchlistModal";
 import EvidenceMeter from "../components/EvidenceMeter";
 import { useSettings } from "../context/SettingsContext";
 import { useOpportunities } from "../hooks/useOpportunities";
-import { getTopOverall } from "../engines/opportunityRankingEngine";
+import {
+  getTopOverall,
+  getTopBySectors,
+} from "../engines/opportunityRankingEngine";
 
 function Watchlist() {
     const { minimumEthicalScore } = useSettings();
@@ -20,6 +23,11 @@ function Watchlist() {
         () => getTopOverall(opportunities, 3),
         [opportunities]
     );
+
+    const sectorOpportunities = useMemo(
+  () => getTopBySectors(opportunities, 3),
+  [opportunities]
+);
 
     return (
         <section className="page-section">
